@@ -2,6 +2,7 @@ import { useContext, useState, useEffect } from "react";
 import { AuthContext } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import styled from "styled-components";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -71,22 +72,115 @@ const Profile = () => {
   if (!userInfo) return <div>Loading...</div>; //userInfo가 없으면 Loading...출력
 
   return (
-    <div>
-      <h2>내 프로필</h2>
-      <p>ID : {userInfo.id}</p>
-      <p>닉네임 : {userInfo.nickname}</p>
+    <StProfileContainer className="Profile">
+      <StProfileBox>
+        <h3>MY PROFILE</h3>
+        <div>
+          <span>ID</span>
+          <p>{userInfo.id}</p>
+          <span>NICKNAME</span>
+          <p>{userInfo.nickname}</p>
+        </div>
 
-      <form onSubmit={handleNicknameChange}>
-        <input
-          type="test"
-          placeholder="새 닉네임"
-          value={newNickname}
-          onChange={(e) => setNewNickname(e.target.value)}
-        />
-        <button type="submit">닉네임 변경</button>
-      </form>
-    </div>
+        <form onSubmit={handleNicknameChange}>
+          <span>닉네임을 변경하시겠습니까?</span>
+          <input
+            type="test"
+            placeholder="새 닉네임"
+            value={newNickname}
+            onChange={(e) => setNewNickname(e.target.value)}
+          />
+          <StButton type="submit">닉네임 변경</StButton>
+        </form>
+      </StProfileBox>
+    </StProfileContainer>
   );
 };
 
 export default Profile;
+
+const StProfileContainer = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #afe6c3;
+  height: calc(100vh - 68px);
+  width: 100%;
+  margin: 0 auto;
+`;
+const StProfileBox = styled.div`
+  background-color: #fff;
+  width: 100%;
+  max-width: 500px;
+  height: 100%;
+  max-height: 600px;
+  box-shadow: rgba(0, 0, 0, 0.15) 0px 5px 15px 0px;
+  display: flex;
+  flex-direction: column;
+  padding: 40px;
+  gap: 20px;
+  justify-content: space-around;
+
+  & h3 {
+    font-size: 20px;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+  }
+
+  & p {
+    font-size: 17px;
+    font-weight: 400;
+    color: #222;
+    letter-spacing: 1px;
+    border-bottom: 1px solid #e9e9e9;
+    padding: 20px 15px;
+    margin-bottom: 20px;
+  }
+  & span {
+    font-size: 15px;
+    font-weight: 400;
+    color: #ccc;
+    letter-spacing: 1px;
+  }
+
+  & form {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+
+    & span {
+      font-size: 15px;
+      font-weight: 400;
+      color: #ccc;
+      letter-spacing: 1px;
+    }
+    & input {
+      border-bottom: 1px solid #e9e9e9;
+      padding: 20px 15px;
+      font-size: 12px;
+
+      &:focus {
+        outline: 1px solid #afe6c3;
+        background-color: #f6f6f6;
+      }
+    }
+  }
+`;
+
+const StButton = styled.button`
+  border-radius: 50px;
+  background-color: #c2fbd7;
+  box-shadow: rgba(25, 25, 25, 0.04) 0 0 1px 0, rgba(0, 0, 0, 0.1) 0 3px 4px 0;
+  color: #008000;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1em;
+  height: 50px;
+  padding: 0 25px;
+  transition: all 200ms;
+
+  &:hover {
+    background-color: #afe6c3;
+    transform: scale(1.05);
+  }
+`;

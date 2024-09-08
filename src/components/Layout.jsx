@@ -1,6 +1,9 @@
 import { useNavigate, Link } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import styled from "styled-components";
+
+import { House, User } from "lucide-react";
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -18,16 +21,20 @@ const Layout = () => {
 
   return (
     <div>
-      <header className="flex justify-between items-center px-20">
+      <StHeader>
         <h1>
-          <Link to="/">Home</Link>
+          <Link to="/">
+            <House />
+          </Link>
         </h1>
         <nav className="flex gap-4">
           {
             //로그인되어있으면 로그아웃 버튼 노출, 로그인 안되어있으면 로그인, 회원가입 버튼 노출
             isAuthenticated ? (
               <>
-                <Link to="/profile">내 프로필</Link>
+                <Link to="/profile">
+                  <User />
+                </Link>
                 <button onClick={handleLogout}>Logout</button>
               </>
             ) : (
@@ -38,9 +45,18 @@ const Layout = () => {
             )
           }
         </nav>
-      </header>
+      </StHeader>
     </div>
   );
 };
 
 export default Layout;
+
+const StHeader = styled.header`
+  box-shadow: rgba(33, 35, 38, 0.1) 0px 10px 10px -10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  font-size: 20px;
+`;
