@@ -6,8 +6,10 @@ import { createTestResult } from "../api/testResults";
 import { useNavigate } from "react-router-dom";
 import { questions } from "../data/questions";
 import { AuthContext } from "../context/AuthContext";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const TestPage = () => {
+  const queryClient = useQueryClient();
   const { loginUser } = useContext(AuthContext);
   console.log("loginUser", loginUser);
   const Navigate = useNavigate();
@@ -30,6 +32,13 @@ const TestPage = () => {
     await createTestResult(resultData); //axios추가함수호출 : 결과값객체 전달
     Navigate("/testResult"); //테스트 결과로 이동
   };
+
+  const { mutate } = useMutation({
+    mutationFn: createTestResult, //createTestResult 함수를 mutationFn으로 전달
+    onSuccess: () => {
+      queryClient.invalidateQueries(["testResults"]);
+    },
+  });
 
   return (
     <div>

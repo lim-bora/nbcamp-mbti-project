@@ -3,7 +3,7 @@ import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
 import styled from "styled-components";
 
-import { House, User } from "lucide-react";
+import { House, User, LogIn, LogOut, UserPlus } from "lucide-react";
 
 const Layout = () => {
   const navigate = useNavigate();
@@ -32,15 +32,22 @@ const Layout = () => {
             //로그인되어있으면 로그아웃 버튼 노출, 로그인 안되어있으면 로그인, 회원가입 버튼 노출
             isAuthenticated ? (
               <>
+                <Link to="/testResultList">결과보기</Link>
                 <Link to="/profile">
                   <User />
                 </Link>
-                <button onClick={handleLogout}>Logout</button>
+                <button onClick={handleLogout}>
+                  <LogOut />
+                </button>
               </>
             ) : (
               <>
-                <Link to="/login">Login</Link>
-                <Link to="/signup">Signup</Link>
+                <Link to="/login">
+                  <LogIn />
+                </Link>
+                <Link to="/signup">
+                  <UserPlus />
+                </Link>
               </>
             )
           }

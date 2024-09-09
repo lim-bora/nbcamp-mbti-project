@@ -1,13 +1,18 @@
 import React from "react";
 import { questions } from "../data/questions";
-import { useState } from "react";
+import { useState, useContext } from "react";
+import { ResultContext } from "../context/ResultContext";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 const TestForm = ({ onSubmit }) => {
+  const { results } = useContext(ResultContext);
   const [answers, setAnswers] = useState(Array(questions.length).fill(null));
 
   const handleSubmit = (e) => {
     e.preventDefault();
     onSubmit(answers); //테스트 제출 함수 호출 (인자로 답 전달)
+    const newResultObj = { title: results };
+    mutate(newResultObj);
   };
 
   const handleChange = (index, optionCheck) => {

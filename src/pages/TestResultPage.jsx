@@ -1,31 +1,29 @@
-import { useState, createContext, useEffect, useContext } from "react";
+import { useEffect, useContext } from "react";
 import axios from "axios";
 import TestResultList from "./TestResultList";
 import { getTestResults } from "../api/testResults";
 import { AuthContext } from "../context/AuthContext";
+import { ResultContext } from "../context/ResultContext";
 import { mbtiDescriptions } from "../data/mbtiDescriptions";
 import { useNavigate } from "react-router-dom";
-
-export const ResultContext = createContext();
 
 const TestResultPage = () => {
   const navigate = useNavigate();
   const { loginUser } = useContext(AuthContext); //로그인유저값
-  const [results, setResults] = useState([]); //결과값 상태
+  const { results, setResults } = useContext(ResultContext);
+
+  useEffect(() => {});
 
   //테스트 결과값들 전체 가져오기
   useEffect(() => {
     const fetchResults = async () => {
-      try {
-        const data = await getTestResults();
-        setResults(data);
-      } catch (error) {
-        console.log("error", error);
-      }
+      const data = await getTestResults();
+      setResults(data);
     };
     fetchResults();
   }, [loginUser.id]); //로그인유저바뀔때 리랜더링
 
+  console.log("results", results);
   //만약 결과값없으면 로딩중 처리
   if (!results || results.length === 0) return <p>로딩 중...</p>;
 
@@ -48,18 +46,14 @@ const TestResultPage = () => {
     : null;
 
   return (
-    <ResultContext.Provider
-      value={{
-        results,
-      }}
-    >
+    <div>
       <h4>{`${loginUser.nickname}님의 테스트 결과`}</h4>
       <h2>{myLastResult.result}</h2>
       <p>{myMbti.description}</p>
       <button onClick={() => navigate("/testResultList")}>
         결과 페이지로 이동
       </button>
-    </ResultContext.Provider>
+    </div>
   );
 };
 
