@@ -22,12 +22,11 @@ const Login = () => {
         password,
       }
     );
-
+    console.log("data", data);
     if (data.success) {
-      //로그인 성공했을 때
-      //로그인
-      console.log("data", data);
-      login(data.accessToken); //토큰 받아서 로그인
+      const userInfo = { id: data.userId, nickname: data.nickname };
+      // console.log("userInfo", userInfo);
+      login(data.accessToken, userInfo); //로그인토큰,유저정보 인자로 전달하여 로그인 함수실행
       setNickname(data.nickname);
       alert(`${data.nickname}님 환영합니다.`); //로그인 성공 메세지
       navigate("/"); //홈으로 이동

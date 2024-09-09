@@ -5,6 +5,7 @@ import Home from "../pages/Home";
 import Layout from "../components/Layout";
 import Login from "../pages/Login";
 import Profile from "../pages/Profile";
+import TestResultList from "../pages/TestResultList";
 import TestResultPage from "../pages/TestResultPage";
 import TestPage from "../pages/TestPage";
 import Signup from "../pages/Signup";
@@ -72,6 +73,14 @@ const ProtectedRoute = () => {
           element={
             <PrivateRoute>
               <TestResultPage />
+            </PrivateRoute>
+          }
+        />
+        <Route
+          path="/testResultList"
+          element={
+            <PrivateRoute>
+              <TestResultList />
             </PrivateRoute>
           }
         />
