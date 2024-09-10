@@ -1,19 +1,53 @@
 import React from "react";
-import { questions } from "../data/questions";
 import { useState, useContext } from "react";
-import { ResultContext } from "../context/ResultContext";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import styled from "styled-components";
+import { createTestResult } from "../api/testResults";
+import { useNavigate } from "react-router-dom";
+import { questions } from "../data/questions";
+import { AuthContext } from "../context/AuthContext";
+import { calculateMBTI } from "../utils/mbtiCalculator";
 
-const TestForm = ({ onSubmit }) => {
-  const { results } = useContext(ResultContext);
+const TestForm = () => {
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { loginUser } = useContext(AuthContext);
   const [answers, setAnswers] = useState(Array(questions.length).fill(null));
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    onSubmit(answers); //테스트 제출 함수 호출 (인자로 답 전달)
-    const newResultObj = { title: results };
-    mutate(newResultObj);
+  //4번 테스트 제출 함수
+  const handleTestSubmit = async (answers) => {
+    //답을 인자로 전달해서 계산함수 실행 후 답 result변수에 담기
+    const calculateResult = calculateMBTI(answers, questions);
+
+    const resultData = {
+      //결과 객체
+      userId: loginUser.id,
+      nickname: loginUser.nickname,
+      calculateResult,
+      answers,
+      date: new Date().toISOString(),
+      visibility: true,
+    };
+    return resultData; //5번
   };
+
+  //3번 onSubmit누르면실행됨
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    //5번                     4번
+    const result = await handleTestSubmit(answers); //테스트 제출 함수 호출 (인자로 답 전달)
+    console.log("resultData", result);
+    //6번
+    createMutation.mutate(result);
+  };
+  //6-1
+  const createMutation = useMutation({
+    mutationFn: createTestResult, //createTestResult 함수를 mutationFn으로 전달
+    onSuccess: () => {
+      queryClient.invalidateQueries(["testResults"]);
+      navigate("/testResult"); //테스트 결과로 이동
+    },
+  });
 
   const handleChange = (index, optionCheck) => {
     setAnswers({
@@ -21,10 +55,10 @@ const TestForm = ({ onSubmit }) => {
       [index]: optionCheck,
     });
   };
-  // console.log("answers", answers);
 
   return (
     <div>
+      {/* 2번 */}
       <form onSubmit={handleSubmit}>
         {questions.map((qa, index) => (
           <div key={qa.id}>
@@ -49,10 +83,29 @@ const TestForm = ({ onSubmit }) => {
             })}
           </div>
         ))}
-        <button type="submit">제출하기</button>
+        {/* 1번 */}
+        <StButton type="submit">제출하기</StButton>
       </form>
     </div>
   );
 };
 
 export default TestForm;
+
+const StButton = styled.button`
+  border-radius: 50px;
+  background-color: #c2fbd7;
+  box-shadow: rgba(25, 25, 25, 0.04) 0 0 1px 0, rgba(0, 0, 0, 0.1) 0 3px 4px 0;
+  color: #008000;
+  cursor: pointer;
+  display: inline-block;
+  font-size: 1em;
+  height: 50px;
+  padding: 0 25px;
+  transition: all 200ms;
+
+  &:hover {
+    background-color: #afe6c3;
+    transform: scale(1.05);
+  }
+`;

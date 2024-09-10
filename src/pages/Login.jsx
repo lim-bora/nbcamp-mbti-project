@@ -6,7 +6,7 @@ import styled from "styled-components";
 
 const Login = () => {
   const navigate = useNavigate();
-  const { login } = useContext(AuthContext);
+  const { login, setLoginUser } = useContext(AuthContext);
 
   const [id, setId] = useState("");
   const [password, setPassword] = useState("");
@@ -25,6 +25,7 @@ const Login = () => {
     console.log("data", data);
     if (data.success) {
       const userInfo = { id: data.userId, nickname: data.nickname };
+      setLoginUser(userInfo); //리랜더링문제
       // console.log("userInfo", userInfo);
       login(data.accessToken, userInfo); //로그인토큰,유저정보 인자로 전달하여 로그인 함수실행
       setNickname(data.nickname);

@@ -42,11 +42,11 @@ const Layout = () => {
               </>
             ) : (
               <>
-                <Link to="/login">
-                  <LogIn />
-                </Link>
                 <Link to="/signup">
                   <UserPlus />
+                </Link>
+                <Link to="/login">
+                  <LogIn />
                 </Link>
               </>
             )
