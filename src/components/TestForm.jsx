@@ -1,9 +1,9 @@
 import React from "react";
-import { useState, useContext } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import styled from "styled-components";
-import { createTestResult } from "../api/testResults";
+import { useState, useContext } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
+import { createTestResult } from "../api/testResults";
 import { questions } from "../data/questions";
 import { AuthContext } from "../context/AuthContext";
 import { calculateMBTI } from "../utils/mbtiCalculator";
@@ -17,13 +17,13 @@ const TestForm = () => {
   //4번 테스트 제출 함수
   const handleTestSubmit = async (answers) => {
     //답을 인자로 전달해서 계산함수 실행 후 답 result변수에 담기
-    const calculateResult = calculateMBTI(answers, questions);
+    const result = calculateMBTI(answers, questions);
 
     const resultData = {
       //결과 객체
       userId: loginUser.id,
       nickname: loginUser.nickname,
-      calculateResult,
+      result,
       answers,
       date: new Date().toISOString(),
       visibility: true,
@@ -61,9 +61,9 @@ const TestForm = () => {
       {/* 2번 */}
       <form onSubmit={handleSubmit}>
         {questions.map((qa, index) => (
-          <div key={qa.id}>
+          <StTestItem key={qa.id}>
             <p>
-              <span>{`Q.${index + 1}번`}</span>
+              <span>{`Q.${index + 1} `}</span>
               {qa.question}
             </p>
             {qa.options.map((option, optionIndex) => {
@@ -81,7 +81,7 @@ const TestForm = () => {
                 </label>
               );
             })}
-          </div>
+          </StTestItem>
         ))}
         {/* 1번 */}
         <StButton type="submit">제출하기</StButton>
@@ -91,6 +91,19 @@ const TestForm = () => {
 };
 
 export default TestForm;
+const StTestItem = styled.div`
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  border-bottom: 1px solid #e9e9e9;
+
+  & p {
+    & span {
+      padding-right: 10px;
+    }
+  }
+`;
 
 const StButton = styled.button`
   border-radius: 50px;
@@ -103,6 +116,9 @@ const StButton = styled.button`
   height: 50px;
   padding: 0 25px;
   transition: all 200ms;
+  margin: 30px auto;
+  display: flex;
+  align-items: center;
 
   &:hover {
     background-color: #afe6c3;

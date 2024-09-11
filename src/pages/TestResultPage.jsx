@@ -1,57 +1,52 @@
 import { useEffect, useContext } from "react";
-import axios from "axios";
-import TestResultList from "./TestResultList";
 import { getTestResults } from "../api/testResults";
 import { AuthContext } from "../context/AuthContext";
-// import { ResultContext } from "../context/ResultContext";
-// import { mbtiDescriptions } from "../data/mbtiDescriptions";
 import { mbtiDescriptions } from "../data/mbtiDescriptions";
 import { useNavigate } from "react-router-dom";
 import styled from "styled-components";
+import { useState } from "react";
 
 const TestResultPage = () => {
   const navigate = useNavigate();
   const { loginUser } = useContext(AuthContext); //로그인유저값
-  // const { results, setResults } = useContext(ResultContext);
-
+  const [myLastResult, setMyLastResult] = useState(null);
+  console.log("myLastResult", myLastResult);
   //테스트 결과값들 전체 가져오기
   useEffect(() => {
     const fetchResults = async () => {
-      const data = await getTestResults();
-      console.log("data", data);
-      // setResults(data);
+      try {
+        const data = await getTestResults();
+        // 전체 결과값 중 로그인 유저의 데이터 필터링
+        const myResult = data.filter(
+          (result) => result.userId === loginUser.id
+        );
+        // 로그인 유저 데이터들 중 가장 최근꺼 저장
+        const last = myResult[myResult.length - 1];
+        const descriptions = mbtiDescriptions[last.result];
+        // const "벨류값" = 객체이름[키이름];
+        console.log("descriptions", descriptions);
+        const result = {
+          ...last,
+          description: descriptions,
+        };
+        setMyLastResult(result);
+      } catch (error) {
+        console.error("Error:", error);
+      }
     };
-    fetchResults();
-  }, [loginUser.id]); //로그인유저바뀔때 리랜더링
+    if (loginUser) {
+      fetchResults();
+    }
+  }, [loginUser]);
 
-  //만약 결과값없으면 로딩중 처리
-  if (!results || results.length === 0) return <p>로딩 중...</p>;
-
-  //전체결과값 중 로그인유저의 데이터 필터링
-  const myResult = results.filter((result) => {
-    return result.userId === loginUser.id;
-  });
-
-  //로그인 유저데이터 데이터들 중 가장 최근꺼 저장
-  const myLastResult = myResult[myResult.length - 1];
-  console.log("mbtiDescriptions", mbtiDescriptions);
-  //mbtiDescriptions가 객체라 키,키값 배열로 변경 후 key값 중 내 mbti와 같은것 찾기
-  const myMbtiEntry = Object.entries(mbtiDescriptions).find(
-    ([key, value]) => key === myLastResult.result
-  );
-  console.log("myMbtiEntry", myMbtiEntry);
-  //데이터 객체화
-  const myMbti = myMbtiEntry
-    ? { mbti: myMbtiEntry[0], description: myMbtiEntry[1] }
-    : null;
-  console.log("myMbti", myMbti);
+  //obj[키값] = 벨류값
   return (
     <StTestResultContainer>
       <StTestResultCenterBox>
         <div>
           <h3>{`${loginUser.nickname}님의 테스트 결과`}</h3>
-          <h2>{myLastResult.result}</h2>
-          <p>{myMbti.description}</p>
+          <h2>{myLastResult?.result}</h2>
+          <p>{myLastResult?.description}</p>
         </div>
 
         <StButton onClick={() => navigate("/testResultList")}>

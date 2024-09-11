@@ -1,7 +1,7 @@
 import axios from "axios";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
-const API_URL = "http://localhost:4000/testResults";
+const API_URL = "https://cyan-possible-erigeron.glitch.me/testResults";
 
 // 데이터 가져오는 함수 (queryFn)
 export const getTestResults = async () => {

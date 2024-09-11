@@ -14,12 +14,12 @@ import { useState } from "react";
 const TestResultList = () => {
   const queryClient = useQueryClient();
   const { loginUser } = useContext(AuthContext);
-  console.log("loginUser", loginUser);
+  const [desc, setDesc] = useState("");
+  const descArr = Object.entries(mbtiDescriptions);
+
   const { data, isPending, isError } = useQuery({
     queryFn: getTestResults,
     queryKey: ["testResults"],
-    refetchOnWindowFocus: true, //다른 창에서 돌아올 때 재요청
-    staleTime: 0, // 데이터를 언제까지 '신선'하다고 볼지, 0이면 항상 refetch
   });
 
   //useQuery는 c/u/d 하는 페이지에 각각 꼭 넣기
@@ -56,9 +56,7 @@ const TestResultList = () => {
   if (isError) {
     return <div>오류입니다..</div>;
   }
-  //if return은 무조건 아래에 넣기
-
-  // console.log("data", data);
+  console.log("data", data);
   return (
     <StResultContainer>
       {data
@@ -68,11 +66,10 @@ const TestResultList = () => {
             (!item.visibility && loginUser && loginUser.id === item.userId)
         )
         .map((item, index) => {
-          const mbtiDescEntry = Object.entries(mbtiDescriptions).find(
+          const mbtiDescEntry = descArr.find(
             ([key, value]) => key === item.result
           );
-          const mbtiDesc = mbtiDescEntry[1];
-
+          console.log("mbtiDescEntry", mbtiDescEntry);
           return (
             <StResultListItem key={index}>
               <StResultListTop>
@@ -80,7 +77,7 @@ const TestResultList = () => {
                 <span>{new Date(item.date).toLocaleDateString()}</span>
               </StResultListTop>
               <h2>{item.result}</h2>
-              <p>{mbtiDesc}</p>
+              <p>{mbtiDescEntry ? mbtiDescEntry[1] : "설명 없음"}</p>
               {/*버튼 : 로그인한 사람만 보여야함*/}
               {loginUser && loginUser.id === item.userId && (
                 <StResultListBottom>
@@ -112,7 +109,7 @@ const StResultContainer = styled.div`
   flex-direction: column;
   gap: 20px;
   align-items: center;
-  padding-top: 10rem;
+  padding: 10rem 0;
 `;
 const StResultListItem = styled.div`
   width: 100%;
